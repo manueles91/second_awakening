@@ -99,7 +99,7 @@ export default function OnboardingPage() {
       // If onboarding is complete, redirect to chat
       if (data.onboarding_complete) {
         setTimeout(() => {
-          router.push("/chat");
+          router.replace("/chat");
         }, 3000);
       }
     } catch {
