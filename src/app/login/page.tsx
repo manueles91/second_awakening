@@ -62,7 +62,7 @@ export default function LoginPage() {
         <CardHeader className="text-center">
           <CardTitle className="text-3xl font-bold tracking-tight">
             <span className="bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
-              ARISE
+              SECOND AWAKENING
             </span>
           </CardTitle>
           <CardDescription className="text-muted-foreground">

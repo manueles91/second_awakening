@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Arise — Solo Leveling Life Coach",
+  title: "Second Awakening — Solo Leveling Life Coach",
   description: "A gamified life coaching app inspired by Solo Leveling. Chat with the System, complete quests, level up your real life.",
 };
 

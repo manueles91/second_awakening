@@ -117,7 +117,7 @@ export default function OnboardingPage() {
           <div className="mb-4 text-center">
             <div className="mb-2 text-2xl font-bold">
               <span className="bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
-                ARISE
+                SECOND AWAKENING
               </span>
             </div>
             <p className="text-xs text-muted-foreground">Hunter Awakening Protocol</p>

@@ -13,7 +13,7 @@ export default function HomePage() {
         {/* Title */}
         <h1 className="mb-2 text-6xl font-extrabold tracking-tighter">
           <span className="bg-gradient-to-r from-indigo-400 via-purple-400 to-indigo-400 bg-clip-text text-transparent">
-            ARISE
+            SECOND AWAKENING
           </span>
         </h1>
 

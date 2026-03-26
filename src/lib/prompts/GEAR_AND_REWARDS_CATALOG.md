@@ -1,4 +1,4 @@
-# GEAR & REWARDS CATALOG — Arise
+# GEAR & REWARDS CATALOG — Second Awakening
 
 All items, gear, titles, and rewards available in the game. The System awards these based on quest completion, milestones, and special events.
 

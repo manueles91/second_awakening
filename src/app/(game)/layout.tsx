@@ -16,7 +16,7 @@ export default function GameLayout({ children }: { children: React.ReactNode }) 
       <header className="flex items-center justify-between border-b border-border bg-card/50 px-3 py-2 backdrop-blur">
         <div className="flex items-center gap-2">
           <span className="bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-lg font-bold text-transparent">
-            ARISE
+            SECOND AWAKENING
           </span>
           {player && (
             <span className="text-xs text-muted-foreground">

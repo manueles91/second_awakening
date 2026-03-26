@@ -1,5 +1,5 @@
 -- ============================================================
--- Arise: Solo Leveling Life Coach — Database Schema
+-- Second Awakening: Solo Leveling Life Coach — Database Schema
 -- ============================================================
 -- Idempotent schema file. Safe to run multiple times.
 -- Requires Supabase (uses auth.users and auth.uid()).

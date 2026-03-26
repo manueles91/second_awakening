@@ -31,7 +31,7 @@ export function ChatInterface({ messages, isLoading, error, onSend }: ChatInterf
             <div className="flex flex-col items-center justify-center py-16 text-center">
               <div className="mb-4 text-4xl font-bold">
                 <span className="bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
-                  ARISE
+                  SECOND AWAKENING
                 </span>
               </div>
               <p className="text-sm text-muted-foreground">
