@@ -1,9 +1,48 @@
--- Arise: Solo Leveling Life Coach — Initial Schema
--- All tables use RLS filtered by auth.uid()
+-- ============================================================
+-- Arise: Solo Leveling Life Coach — Database Schema
+-- ============================================================
+-- Idempotent schema file. Safe to run multiple times.
+-- Requires Supabase (uses auth.users and auth.uid()).
+--
+-- Usage:
+--   Run this file against your Supabase project's SQL editor
+--   or via psql/supabase CLI.
+-- ============================================================
 
------------------------------------------------------------
+-- ============================================================
+-- Drop existing objects (reverse dependency order)
+-- ============================================================
+
+DROP POLICY IF EXISTS "Users can only access own titles" ON titles_unlocked;
+DROP POLICY IF EXISTS "Users can only access own chats" ON chat_history;
+DROP POLICY IF EXISTS "Users can only access own shadows" ON shadow_army;
+DROP POLICY IF EXISTS "Users can only access own inventory" ON inventory;
+DROP POLICY IF EXISTS "Users can only access own feedback" ON feedback_log;
+DROP POLICY IF EXISTS "Users can only access own quests" ON quest_log;
+DROP POLICY IF EXISTS "Users can only access own preferences" ON player_preferences;
+DROP POLICY IF EXISTS "Users can only access own player" ON players;
+
+-- Drop FK constraints on players before dropping inventory
+ALTER TABLE IF EXISTS players DROP CONSTRAINT IF EXISTS fk_equipped_weapon;
+ALTER TABLE IF EXISTS players DROP CONSTRAINT IF EXISTS fk_equipped_armor_helm;
+ALTER TABLE IF EXISTS players DROP CONSTRAINT IF EXISTS fk_equipped_armor_chest;
+ALTER TABLE IF EXISTS players DROP CONSTRAINT IF EXISTS fk_equipped_armor_legs;
+ALTER TABLE IF EXISTS players DROP CONSTRAINT IF EXISTS fk_equipped_accessory_1;
+ALTER TABLE IF EXISTS players DROP CONSTRAINT IF EXISTS fk_equipped_accessory_2;
+ALTER TABLE IF EXISTS players DROP CONSTRAINT IF EXISTS fk_equipped_accessory_3;
+
+DROP TABLE IF EXISTS titles_unlocked;
+DROP TABLE IF EXISTS chat_history;
+DROP TABLE IF EXISTS shadow_army;
+DROP TABLE IF EXISTS feedback_log;
+DROP TABLE IF EXISTS quest_log;
+DROP TABLE IF EXISTS inventory;
+DROP TABLE IF EXISTS player_preferences;
+DROP TABLE IF EXISTS players;
+
+-- ============================================================
 -- PLAYERS
------------------------------------------------------------
+-- ============================================================
 CREATE TABLE players (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE NOT NULL UNIQUE,
@@ -50,7 +89,7 @@ CREATE TABLE players (
   penalties_survived INTEGER NOT NULL DEFAULT 0,
   compassion_overrides INTEGER NOT NULL DEFAULT 0,
 
-  -- Equipped gear (references inventory)
+  -- Equipped gear (references inventory — FKs added after inventory table)
   equipped_weapon UUID,
   equipped_armor_helm UUID,
   equipped_armor_chest UUID,
@@ -75,9 +114,9 @@ ALTER TABLE players ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Users can only access own player" ON players
   FOR ALL USING (auth.uid() = user_id);
 
------------------------------------------------------------
+-- ============================================================
 -- PLAYER PREFERENCES
------------------------------------------------------------
+-- ============================================================
 CREATE TABLE player_preferences (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   player_id UUID REFERENCES players(id) ON DELETE CASCADE NOT NULL UNIQUE,
@@ -138,9 +177,9 @@ ALTER TABLE player_preferences ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Users can only access own preferences" ON player_preferences
   FOR ALL USING (player_id IN (SELECT id FROM players WHERE user_id = auth.uid()));
 
------------------------------------------------------------
+-- ============================================================
 -- QUEST LOG
------------------------------------------------------------
+-- ============================================================
 CREATE TABLE quest_log (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   player_id UUID REFERENCES players(id) ON DELETE CASCADE NOT NULL,
@@ -190,9 +229,9 @@ ALTER TABLE quest_log ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Users can only access own quests" ON quest_log
   FOR ALL USING (player_id IN (SELECT id FROM players WHERE user_id = auth.uid()));
 
------------------------------------------------------------
+-- ============================================================
 -- FEEDBACK LOG
------------------------------------------------------------
+-- ============================================================
 CREATE TABLE feedback_log (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   player_id UUID REFERENCES players(id) ON DELETE CASCADE NOT NULL,
@@ -224,9 +263,9 @@ ALTER TABLE feedback_log ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Users can only access own feedback" ON feedback_log
   FOR ALL USING (player_id IN (SELECT id FROM players WHERE user_id = auth.uid()));
 
------------------------------------------------------------
+-- ============================================================
 -- INVENTORY
------------------------------------------------------------
+-- ============================================================
 CREATE TABLE inventory (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   player_id UUID REFERENCES players(id) ON DELETE CASCADE NOT NULL,
@@ -255,7 +294,7 @@ ALTER TABLE inventory ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Users can only access own inventory" ON inventory
   FOR ALL USING (player_id IN (SELECT id FROM players WHERE user_id = auth.uid()));
 
--- Add foreign key constraints for equipped gear
+-- Add foreign key constraints for equipped gear (now that inventory exists)
 ALTER TABLE players
   ADD CONSTRAINT fk_equipped_weapon FOREIGN KEY (equipped_weapon) REFERENCES inventory(id) ON DELETE SET NULL,
   ADD CONSTRAINT fk_equipped_armor_helm FOREIGN KEY (equipped_armor_helm) REFERENCES inventory(id) ON DELETE SET NULL,
@@ -265,9 +304,9 @@ ALTER TABLE players
   ADD CONSTRAINT fk_equipped_accessory_2 FOREIGN KEY (equipped_accessory_2) REFERENCES inventory(id) ON DELETE SET NULL,
   ADD CONSTRAINT fk_equipped_accessory_3 FOREIGN KEY (equipped_accessory_3) REFERENCES inventory(id) ON DELETE SET NULL;
 
------------------------------------------------------------
+-- ============================================================
 -- SHADOW ARMY
------------------------------------------------------------
+-- ============================================================
 CREATE TABLE shadow_army (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   player_id UUID REFERENCES players(id) ON DELETE CASCADE NOT NULL,
@@ -295,9 +334,9 @@ ALTER TABLE shadow_army ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Users can only access own shadows" ON shadow_army
   FOR ALL USING (player_id IN (SELECT id FROM players WHERE user_id = auth.uid()));
 
------------------------------------------------------------
+-- ============================================================
 -- CHAT HISTORY
------------------------------------------------------------
+-- ============================================================
 CREATE TABLE chat_history (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   player_id UUID REFERENCES players(id) ON DELETE CASCADE NOT NULL,
@@ -318,9 +357,9 @@ ALTER TABLE chat_history ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Users can only access own chats" ON chat_history
   FOR ALL USING (player_id IN (SELECT id FROM players WHERE user_id = auth.uid()));
 
------------------------------------------------------------
+-- ============================================================
 -- TITLES UNLOCKED
------------------------------------------------------------
+-- ============================================================
 CREATE TABLE titles_unlocked (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   player_id UUID REFERENCES players(id) ON DELETE CASCADE NOT NULL,
